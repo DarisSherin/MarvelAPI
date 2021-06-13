@@ -40,30 +40,6 @@ public class MarvelAPIClient {
 	    @Value("${public.key}")
 	    private String publiceKey;
 
-	    public List<MarvelAPICharacter> getCharacterDetails() throws CharacterException{
-
-	        int limit = 100;
-	        int offset = 0; 
-	        boolean onSuccess = true;
-	        List<MarvelAPICharacter> characterDetails = new ArrayList<>();
-	        try {
-	            while (onSuccess) {
-	            	MarvelAPICharacter character = getCharacterDetailsByOffSetAndLimit(offset, limit);
-	                if (character == null ||
-	                        (character != null && character.getData() != null
-	                                && character.getData().getCount() == 0)) {
-	                    onSuccess = false;
-	                } else {
-	                    characterDetails.add(character);
-	                }
-	                offset = offset + limit;
-	            }
-	        } catch (Exception e) {
-	            throw new CharacterException(e.getMessage());
-	        }
-	        return characterDetails;
-	    }
-
 	
 	    public MarvelAPICharacter getCharacterDetailsById(Integer characterId) throws CharacterException{
 	    	
@@ -84,36 +60,57 @@ public class MarvelAPIClient {
 	        return marvel;
 	    }
 
-	    private MarvelAPICharacter getCharacterDetailsByOffSetAndLimit(int offset, int limit) throws CharacterException{
-	    	
-	    	logger.info("RestClient call to display Characters Ids");
+		public List<MarvelAPICharacter> getCharacterDetails() {
+			    int limit = Constants.LIMIT;
+		        int offset = 0; 
+		        boolean onSuccess = true;
+		        List<MarvelAPICharacter> characterDetails = new ArrayList<>();
+		        try {
+		            while (onSuccess) {
+		            	MarvelAPICharacter character = getCharacterDetailsByOffSetAndLimit(offset, limit);
+		                if (character == null ||
+		                        (character != null && character.getData() != null
+		                                && character.getData().getCount() == 0)) {
+		                    onSuccess = false;
+		                } else {
+		                    characterDetails.add(character);
+		                }
+		                offset = offset + limit;
+		            }
+		        } catch (Exception e) {
+		            throw new CharacterException(e.getMessage());
+		        }
+		        return characterDetails;
+		}
+		
+		  private MarvelAPICharacter getCharacterDetailsByOffSetAndLimit(int offset, int limit) throws CharacterException{
+		    	
+		    	logger.info("RestClient call to display Characters Ids");
 
-	    	MarvelAPICharacter marvel=null;
-	        HttpEntity<Object> requestEntity = new HttpEntity<>(null, getHttpHeader());
-	        try{
+		    	MarvelAPICharacter marvel=null;
+		        HttpEntity<Object> requestEntity = new HttpEntity<>(null, getHttpHeader());
+		        try{
 
-	        	marvel          =
-	                    restTemplate.exchange(characterAPIUrl+ "?" + "limit=" + limit + "&offset=" + offset + "&" +getApiHash(),
-	                            HttpMethod.GET,requestEntity,new ParameterizedTypeReference<MarvelAPICharacter>() {
-	                            }).getBody();
+		        	marvel = restTemplate.exchange(characterAPIUrl+ "?" + "limit=" + limit + "&offset=" + offset + "&" +getApiHash(),
+		                            HttpMethod.GET,requestEntity,new ParameterizedTypeReference<MarvelAPICharacter>() {
+		                            }).getBody();
 
-	        }catch(Exception e){
-	            throw new CharacterException(e.getMessage());
-	        }
-	        return marvel;
-	    }
+		        }catch(Exception e){
+		            throw new CharacterException(e.getMessage());
+		        }
+		        return marvel;
+		    }
 
-	    private HttpHeaders getHttpHeader() {
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_JSON);
-	        return headers;
-	    }
+		    private HttpHeaders getHttpHeader() {
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.setContentType(MediaType.APPLICATION_JSON);
+		        return headers;
+		    }
 
-	    private String getApiHash() {
-	        String ts= DateUtils.convertDateToString(new Date(),Constants.DD_MM_YYYY_HH_MM_SS);
-	        return "ts="+ts+"&apikey="+publiceKey+"&hash="+DigestUtils.md5Hex(ts+privateKey+publiceKey).toLowerCase();
+		    private String getApiHash() {
+		        String ts= DateUtils.convertDateToString(new Date(),Constants.DD_MM_YYYY_HH_MM_SS);
+		        return "ts="+ts+"&apikey="+publiceKey+"&hash="+DigestUtils.md5Hex(ts+privateKey+publiceKey).toLowerCase();
 
-	    }
-
+		    }
 	}
 

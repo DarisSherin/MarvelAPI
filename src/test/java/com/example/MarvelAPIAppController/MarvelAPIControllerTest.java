@@ -44,70 +44,58 @@ public class MarvelAPIControllerTest {
 	 static MarvelAPICharacterById marvelCharacterById;
 	 
 	 
-	 @BeforeEach
-	    public  void setup(){
+		@BeforeEach
+		public void setup() {
 
-		 marvelCharacterById=new MarvelAPICharacterById();
-		 marvelCharacterById.setId(1010875);
-		 marvelCharacterById.setName("X-Ray (James Darnell)");
-		 marvelCharacterById.setDescription("James Darnell, along with his sister, was among the small group led by engineer Simon Utrecht to simulate the crash that gave the Fantastic Four their powers, and has remained with the U-Foes ever since.");
-		 marvelCharacterById.setThumbnail(new Thumbnail("jpg","http://i.annihil.us/u/prod/marvel/i/mg/f/40/4c0035a250615"));
+			marvelCharacterById = new MarvelAPICharacterById();
+			marvelCharacterById.setId(1011297);
+			marvelCharacterById.setName("Agent Brand");
+			marvelCharacterById.setDescription("");
+			marvelCharacterById
+					.setThumbnail(new Thumbnail("jpg", "http://i.annihil.us/u/prod/marvel/i/mg/4/60/52695285d6e7e"));
 
-	        characterIds.add(1011281);
-	        characterIds.add(1009717);
-	        characterIds.add(1010995);
-	        characterIds.add(1010729);
+			characterIds.add(1011334);
+			characterIds.add(1017100);
+			characterIds.add(1009144);
+			characterIds.add(1010699);
 
-	        marvelCharacterByIdList=new ArrayList<>();
-	        marvelCharacterByIdList.add(marvelCharacterById);
-	 }  
-	      
-	        @Test
-	        public void testAllCharacterId() throws Exception{
+			marvelCharacterByIdList = new ArrayList<>();
+			marvelCharacterByIdList.add(marvelCharacterById);
+		}
 
-	            Mockito.when(marvelService.getCharacters()).thenReturn(characterIds);
+		@Test
+		public void testAllCharacterId() throws Exception {
 
-	            this.mockMvc
-	                    .perform(get("/marvelapi/characters")
-	                            .with(httpBasic("user","password")))
-	                    .andDo(print())
-	                    .andExpect(status().isOk());
+			Mockito.when(marvelService.getCharacters()).thenReturn(characterIds);
 
-	        }
+			this.mockMvc.perform(get("/marvelapi/characters").with(httpBasic("user", "password"))).andDo(print())
+					.andExpect(status().isOk());
 
+		}
 
-	        @Test
-	        public void testAllCharacterIdForException() throws Exception{
+		@Test
+		public void testAllCharacterIdForException() throws Exception {
 
-	            Mockito.when(marvelService.getCharacters()).thenThrow(CharacterException.class);
+			Mockito.when(marvelService.getCharacters()).thenThrow(CharacterException.class);
 
-	            this.mockMvc
-	                    .perform(get("/marvelapi/characters")
-	                            .with(httpBasic("user","password")))
-	                    .andDo(print())
-	                    .andExpect(status().isInternalServerError());
+			this.mockMvc.perform(get("/marvelapi/characters").with(httpBasic("user", "password"))).andDo(print())
+					.andExpect(status().isInternalServerError());
 
-	        }
+		}
 
+		@Test
+		public void testCharacterByIdSearch() throws Exception {
 
-	        @Test
-	        public void testCharacterByIdSearch() throws Exception{
+			ResponseMarvel responseMarvel = new ResponseMarvel();
+			responseMarvel.setHttpStatus(HttpStatus.OK);
+			responseMarvel.setMarvelAPICharacterById(marvelCharacterById);
 
-	            ResponseMarvel responseMarvel=new ResponseMarvel();
-	            responseMarvel.setHttpStatus(HttpStatus.OK);
-	            responseMarvel.setMarvelAPICharacterById(marvelCharacterById);
+			Mockito.when(marvelService.getCharacterById(1010875)).thenReturn(responseMarvel);
 
-	            Mockito.when(marvelService.getCharacterById(1010875)).thenReturn(responseMarvel);
+			this.mockMvc.perform(get("/marvelapi/characters/1011297").with(httpBasic("user", "password")))
+					.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("id").value("1011297"))
+					.andExpect(jsonPath("name").value("Agent Brand"));
 
-	            this.mockMvc
-	                    .perform(get("/marvelapi/characters/1010875")
-	                            .with(httpBasic("user","password")))
-	                    .andDo(print())
-	                    .andExpect(status().isOk())
-	                    .andExpect(jsonPath("id").value("1010875"))
-	                    .andExpect(jsonPath("name").value("X-Ray (James Darnell)"));
+		}
 
-	        }
-
-	        
 }

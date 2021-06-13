@@ -12,14 +12,11 @@ import com.example.MarvelAPIApp.Exception.CharacterException;
 
 @Component
 public class MarvelDetails {
+	
+	  @Autowired MarvelAPIClient marvelClient;
 
-
-	    @Autowired
-	    MarvelAPIClient marvelClient;
-
-	    @CacheAnnotation
-	    public List<MarvelAPICharacter> getMarvelDetails(Date currentDate) throws CharacterException {
-	        return marvelClient.getCharacterDetails() ;
-	    }
-
+	 @CacheAnnotation
+	 public List<MarvelAPICharacter> getMarvelDetails(Date currentDate) throws CharacterException {
+	        return marvelClient.getCharacterDetails();
+	        }
 }

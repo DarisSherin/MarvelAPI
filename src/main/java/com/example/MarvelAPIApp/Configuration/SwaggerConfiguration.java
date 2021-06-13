@@ -3,9 +3,7 @@ package com.example.MarvelAPIApp.Configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.google.common.base.Predicate;
-
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -15,48 +13,35 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Collections;
 
-/**
- * The Class SwaggerConfig
- */
+
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-	  @Value("${project.title}")
-	    private String title = "Commercetools Spring";
+	
+	    @Value("${title}")
+	    private String title;
 
-	    /** The description. */
-	    @Value("${project.description}")
+	    @Value("${description}")
 	    private String description;
 
-	    /** The contact email id. */
-	    @Value("${project.contact.emailid}")
+	    @Value("${contact.emailid}")
 	    private String contactEmailId;
 
-	    /** The api version. */
-	    @Value("${swagger.api.version}")
+	    @Value("${api.version}")
 	    private String apiVersion;
 
-	    /** The api contact name. */
-	    @Value("${project.organization.name}")
+	    @Value("${contact.name}")
 	    private String apiContactName;
 
-	    /** The api contact url. */
-	    @Value("${project.organization.url}")
+	    @Value("${contact.url}")
 	    private String apiContactUrl;
 
-	    /** The license. */
-	    @Value("${project.license}")
+	    @Value("${license}")
 	    private String license;
 
-	    /** The license url. */
-	    @Value("${project.license.url}")
+	    @Value("${license.url}")
 	    private String licenseUrl;
 
-	    /**
-	     * Api.
-	     *
-	     * @return the docket
-	     */
 	    @Bean
 	    public Docket api() {
 	        return new Docket(DocumentationType.SWAGGER_2).apiInfo(new ApiInfo(

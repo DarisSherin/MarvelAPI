@@ -26,35 +26,35 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 @RequestMapping("/marvelapi")
 public class MarvelAPIController {
-	 private static final Logger logger = LoggerFactory.getLogger(MarvelAPIController.class);
-	
-	   @Autowired
-	    MarvelAPIService marvelService;
+	private static final Logger logger = LoggerFactory.getLogger(MarvelAPIController.class);
 
-	 @GetMapping(value="/characters")
-	 @ApiOperation(value="Get all Marvel Character IDs",notes="This API retrieves Marvel character IDs from Marvel API.")
-	    public ResponseEntity<List<Integer>> getCharacters(){
-		 logger.info("Controller to get Character IDs");
-	        List<Integer> characterIds;
+	@Autowired
+	MarvelAPIService marvelService;
 
-	        try{
-	            characterIds=marvelService.getCharacters();
-	            return new ResponseEntity<>(characterIds,HttpStatus.OK);
-	        }catch(CharacterException e){
-	            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
+	@GetMapping(value = "/characters")
+	@ApiOperation(value = "Get all Marvel Character IDs", notes = "This API retrieves Marvel character IDs from Marvel API.")
+	public ResponseEntity<List<Integer>> getCharacters() {
+		logger.info("Controller to get Character IDs");
+		List<Integer> characterIds;
 
-	    }
+		try {
+			characterIds = marvelService.getCharacters();
+			return new ResponseEntity<>(characterIds, HttpStatus.OK);
+		} catch (CharacterException e) {
+			return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
-	   
-	    @ApiOperation(value="Get character information for the given character and translates if required",notes="This API retrieves Marvel character information" +
-	            "from Marvel API and translates description if valid ISO-639-1 language code is given")
-	    @GetMapping(value="/characters/{characterid}")
-	    public ResponseEntity<MarvelAPICharacterById> getCharacterInformationById(@ApiParam(value="CharacterId",example = "123") @PathVariable("characterid") Integer characterid){
-	    	logger.info("Controller to get Character details by Id");
-	        ResponseMarvel responseMarvel;
-	        responseMarvel=marvelService.getCharacterById(characterid);
-	        return new ResponseEntity<>(responseMarvel.getMarvelAPICharacterById(),responseMarvel.getHttpStatus());
-	    }
+	}
+
+	@ApiOperation(value = "Get character information for the given character and translates if required", notes = "This API retrieves Marvel character information"
+			+ "from Marvel API and translates description if valid ISO-639-1 language code is given")
+	@GetMapping(value = "/characters/{characterid}")
+	public ResponseEntity<MarvelAPICharacterById> getCharacterInformationById(
+			@ApiParam(value = "CharacterId", example = "123") @PathVariable("characterid") Integer characterid) {
+		logger.info("Controller to get Character details by Id");
+		ResponseMarvel responseMarvel;
+		responseMarvel = marvelService.getCharacterById(characterid);
+		return new ResponseEntity<>(responseMarvel.getMarvelAPICharacterById(), responseMarvel.getHttpStatus());
+	}
 
 }

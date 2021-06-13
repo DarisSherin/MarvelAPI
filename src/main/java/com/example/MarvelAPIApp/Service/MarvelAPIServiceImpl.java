@@ -18,7 +18,6 @@ import com.example.MarvelAPIApp.DTO.MarvelAPICharacterById;
 import com.example.MarvelAPIApp.DTO.ResponseMarvel;
 import com.example.MarvelAPIApp.Exception.CharacterException;
 import com.example.MarvelAPIApp.Model.MarvelAPIModel;
-import com.example.MarvelAPIApp.Repository.MarvelAPIRepository;
 
 @Service
 public class MarvelAPIServiceImpl implements MarvelAPIService {
@@ -30,9 +29,6 @@ public class MarvelAPIServiceImpl implements MarvelAPIService {
 
 	@Autowired
 	MarvelAPIClient marvelAPIClient;
-
-	@Autowired
-	MarvelAPIRepository marvelRepository;
 
 	@Override
 	public List<Integer> getCharacters() {
@@ -58,7 +54,7 @@ public class MarvelAPIServiceImpl implements MarvelAPIService {
 	}
 
 	@Override
-	public ResponseMarvel getCharacterById(Integer characterId) {
+	public ResponseMarvel getCharacterById(Integer characterId) throws CharacterException {
 		
 		logger.info("Service layer to process the request for setting Character details with given Id");
 
@@ -78,33 +74,14 @@ public class MarvelAPIServiceImpl implements MarvelAPIService {
 						marvelCharacter.getData().getResults().stream().findFirst().get().getDescription());
 				marvelCharacterById
 						.setThumbnail(marvelCharacter.getData().getResults().stream().findFirst().get().getThumbnail());
-				populateSearchDetails(marvelCharacterById);
 			}
 		} catch (CharacterException e) {
 			responseMarvel.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 		responseMarvel.setMarvelAPICharacterById(marvelCharacterById);
 		responseMarvel.setHttpStatus(HttpStatus.OK);
 		return responseMarvel;
 	}
 
-	private void populateSearchDetails(MarvelAPICharacterById marvelCharacterById) throws CharacterException {
-
-		MarvelAPIModel model = new MarvelAPIModel();
-
-		try {
-			model.setCharacterId(marvelCharacterById.getId());
-			model.setName(marvelCharacterById.getName());
-			model.setDescription(marvelCharacterById.getDescription());
-			model.setExtension(marvelCharacterById.getThumbnail().getExtension());
-			model.setThumbnailPath(marvelCharacterById.getThumbnail().getPath());
-			model.setSearchTimestamp(new Date());
-			marvelRepository.save(model);
-		} catch (Exception e) {
-			throw new CharacterException(e.getMessage());
-		}
-
-	}
 
 }
